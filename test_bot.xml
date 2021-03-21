@@ -1,0 +1,28 @@
+<context>
+    <!-- dates = {date1:[film1,...filmn],date2:...} -->
+    <pattern name="Date_table" value="entity://dates"/>
+
+    <input pattern="* (какие фильмы | афиша) * [$Date]">
+        <!-- Go to the timetable showing if Date is provided -->
+        <context id="timetable" if="full($Date)"/>
+
+        <!-- Ask for the Date if it was not provided -->
+        <context id="timetable_date" if="empty($Date)">
+            <output value="В какую дату Вы бы хотели посетить кинотеатр?" if="empty($Date)"/>
+
+            <input>
+                <pattern value="* $Date *"/>
+
+                <context id="timetable"/> <!-- Go to the timetable -->
+            </input>
+        </context>
+
+        <context id="timetable">
+        <!-- Timetable showing -->
+            <var name="Films" value='get("$Date",$Date_table)'/>
+
+            <output value="Расписание на $Date пока недоступно!" if="empty($Films)"/>
+            <output value='$Date для просмотра доступны $Films'/>
+        </context>
+    </input>
+</context>
